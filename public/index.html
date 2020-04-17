@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Random Quote Machine - Nam Dev</title>
+
+    <!-- update the version number as needed -->
+    <script defer src="/__/firebase/7.14.1/firebase-app.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="/__/firebase/7.14.1/firebase-auth.js"></script>
+    <script defer src="/__/firebase/7.14.1/firebase-database.js"></script>
+    <script defer src="/__/firebase/7.14.1/firebase-messaging.js"></script>
+    <script defer src="/__/firebase/7.14.1/firebase-storage.js"></script>
+    <!-- initialize the SDK after all desired features are loaded -->
+    <script defer src="/__/firebase/init.js"></script>
+
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="quote-box">
+        <div class="quote-text">
+          <i class="fa fa-quote-left"> </i
+          ><span id="text"
+            >Hello World, My name is Nam Dev. Today, I will talk about myself.
+            Thankyou for listen.</span
+          >
+        </div>
+        <div class="quote-author">- <span id="author">Nam Dev</span></div>
+        <div class="quote-buttons">
+          <a
+            class="button"
+            id="tweet-quote"
+            title="Tweet this quote!"
+            target="_blank"
+          >
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a
+            class="button"
+            id="tumblr-quote"
+            title="Post this quote on tumblr!"
+            target="_blank"
+          >
+            <i class="fab fa-tumblr"></i>
+          </a>
+          <button class="button" id="new-quote">New quote</button>
+        </div>
+      </div>
+      <div class="footer">
+        by <a href="https://codepen.io/namdevdk2710" target="_blank">Nam Dev</a>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+
+    <script>
+      let quotesDate;
+      let currentQuote = "";
+      let currentAuthor = "";
+
+      const inIframe = () => {
+        try {
+          return window.self !== window.top;
+        } catch (e) {
+          return true;
+        }
+      };
+
+      const getQuotes = async () => {
+        let url =
+          "https://gist.githubusercontent.com/camperbot/5a022b72e96c4c9585c32bf6a75f62d9/raw/e3c6895ce42069f0ee7e991229064f167fe8ccdc/quotes.json";
+
+        return await axios.get(url);
+      };
+
+      const getRandomQuote = () => {
+        return quotesData.quotes[
+          Math.floor(Math.random() * quotesData.quotes.length)
+        ];
+      };
+
+      const getQuote = () => {
+        let randomQuote = getRandomQuote();
+
+        currentQuote = randomQuote.quote;
+        currentAuthor = randomQuote.author;
+
+        let tweetQuote = document.getElementById("tweet-quote");
+        let tumblrQuote = document.getElementById("tumblr-quote");
+        let quoteText = document.getElementById("text");
+        let quoteAuthor = document.getElementById("author");
+
+        tweetQuote.setAttribute(
+          "href",
+          "https://twitter.com/intent/tweet?hashtags=quotes&related=freecodecamp&text=" +
+            encodeURIComponent('"' + currentQuote + '" ' + currentAuthor)
+        );
+        tumblrQuote.setAttribute(
+          "href",
+          "https://www.tumblr.com/widgets/share/tool?posttype=quote&tags=quotes,freecodecamp&caption=" +
+            encodeURIComponent(currentAuthor) +
+            "&content=" +
+            encodeURIComponent(currentQuote) +
+            "&canonicalUrl=https%3A%2F%2Fwww.tumblr.com%2Fbuttons&shareSource=tumblr_share_button"
+        );
+
+        quoteText.innerHTML = randomQuote.quote;
+        quoteAuthor.innerHTML = randomQuote.author;
+      };
+
+      document.addEventListener("DOMContentLoaded", function () {
+        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+        // // The Firebase SDK is initialized and available here!
+        //
+        // firebase.auth().onAuthStateChanged(user => { });
+        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
+        // firebase.messaging().requestPermission().then(() => { });
+        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
+        //
+        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+
+        // Project
+        let newQuote = document.getElementById("new-quote");
+
+        getQuotes().then((res) => {
+          quotesData = res.data;
+          getQuote();
+        });
+
+        newQuote.addEventListener("click", getQuote);
+        // End
+
+        // try {
+        //   let app = firebase.app();
+        //   let features = ["auth", "database", "messaging", "storage"].filter(
+        //     (feature) => typeof app[feature] === "function"
+        //   );
+        //   document.getElementById(
+        //     "load"
+        //   ).innerHTML = `Firebase SDK loaded with ${features.join(", ")}`;
+        // } catch (e) {
+        //   console.error(e);
+        //   document.getElementById("load").innerHTML =
+        //     "Error loading the Firebase SDK, check the console.";
+        // }
+      });
+    </script>
+  </body>
+</html>
